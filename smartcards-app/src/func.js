@@ -55,8 +55,10 @@ export const handleCreateFlashcards = async (terms, setFlashcards, setView) => {
     }
 };
 
-export const handleNext = (currentIndex, setCurrentCardIndex, flashcards) => {
-    setCurrentCardIndex((currentIndex + 1) % flashcards.length);
+export const handleNext = (currentIndex, setCurrentCardIndex, flashcards, setIsFlipped) => {
+    setIsFlipped(false); // Flip to the front (key term)
+    setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
+
 };
 
 export const handlePrevious = (currentIndex, setCurrentCardIndex, flashcards) => {
