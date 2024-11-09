@@ -1,6 +1,12 @@
 import React, { useState } from "react";
-import axios from "axios";
 import './App.css';
+import {
+    handleExtractTerms,
+    handleCreateFlashcards,
+    handleNext,
+    handlePrevious,
+    handleFlip
+} from "./func";
 
 function App() {
     const [text, setText] = useState("");
@@ -9,99 +15,6 @@ function App() {
     const [view, setView] = useState("extract");
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
-
-    const handleExtractTerms = async () => {
-        try {
-            console.log("Authorization Header:", `Bearer ${process.env.REACT_APP_CHATGPT_API_KEY}`);
-            const response = await axios.post(
-                "https://api.openai.com/v1/chat/completions",
-                {
-                    model: "gpt-3.5-turbo",
-                    messages: [
-                        {
-                            role: "user",
-                            content: `Extract key terms from this text: ${text}`,
-                        },
-                    ],
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${process.env.REACT_APP_CHATGPT_API_KEY}`,
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-            const extractedTerms = response.data.choices[0].message.content.split(", ");
-            setTerms(extractedTerms);
-        } catch (error) {
-            console.error("Error extracting terms:", error);
-        }
-    };
-
-    const handleCreateFlashcards = async () => {
-        try {
-            // Create a prompt for generating concise definitions for each term
-            const prompt = `Create concise definitions for the following terms. Format each flashcard as 'Term: Definition' on a new line: ${terms.join(", ")}`;
-
-            const response = await axios.post(
-                "https://api.openai.com/v1/chat/completions",
-                {
-                    model: "gpt-3.5-turbo",
-                    messages: [
-                        {
-                            role: "user",
-                            content: prompt,
-                        },
-                    ],
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${process.env.REACT_APP_CHATGPT_API_KEY}`,
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            // Generate flashcards from the response
-            const generatedFlashcards = response.data.choices[0].message.content
-                .split("\n")
-                .map((card) => {
-                    const [term, ...definitionParts] = card.split(": ");
-                    const definition = definitionParts.join(": "); // Rejoin in case the definition contains ":"
-                    return { term: term.trim(), definition: definition.trim() };
-                })
-                .filter((card) => card.term && card.definition); // Remove any cards with blank terms or definitions
-
-            if (generatedFlashcards.length === 0) {
-                console.error("No valid flashcards were generated");
-                // Optionally, show an error message to the user here
-                return;
-            }
-
-            setFlashcards(generatedFlashcards);
-            setCurrentCardIndex(0);
-            setIsFlipped(false);
-            setView("flashcards");
-        } catch (error) {
-            console.error("Error creating flashcards:", error);
-        }
-    };
-
-
-    const handleNext = () => {
-        setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
-        setIsFlipped(false);
-    };
-
-    const handlePrevious = () => {
-        setCurrentCardIndex((prevIndex) => (prevIndex - 1 + flashcards.length) % flashcards.length);
-        setIsFlipped(false);
-    };
-
-    const handleFlip = () => {
-        console.log("Flipping card", !isFlipped); // Check if state is changing
-        setIsFlipped(!isFlipped);
-    };
 
     return (
         <div className="App">
@@ -120,7 +33,7 @@ function App() {
                         rows="6"
                         placeholder="Enter text here..."
                     />
-                    <button onClick={handleExtractTerms}>Extract Terms</button>
+                    <button onClick={() => handleExtractTerms(text, setTerms)}>Extract Terms</button>
                     <div>
                         <h3>Extracted Key Terms:</h3>
                         <ul>
@@ -141,13 +54,13 @@ function App() {
                         rows="3"
                         placeholder="Enter key terms separated by commas..."
                     />
-                    <button onClick={handleCreateFlashcards}>Create Flashcards</button>
+                    <button onClick={() => handleCreateFlashcards(terms, setFlashcards, setView)}>Create Flashcards</button>
                 </div>
             )}
 
             {view === "flashcards" && flashcards.length > 0 && (
                 <div className="flashcard-view">
-                    <div className="flashcard" onClick={handleFlip}>
+                    <div className="flashcard" onClick={() => handleFlip(isFlipped, setIsFlipped)}>
                         <div className={`flashcard-inner ${isFlipped ? 'is-flipped' : ''}`}>
                             <div className="flashcard-front">
                                 <p>{flashcards[currentCardIndex].term}</p>
@@ -158,9 +71,9 @@ function App() {
                         </div>
                     </div>
                     <div className="flashcard-controls">
-                        <button onClick={handlePrevious}>Previous</button>
-                        <button onClick={handleFlip}>Flip</button>
-                        <button onClick={handleNext}>Next</button>
+                        <button onClick={() => handlePrevious(currentCardIndex, setCurrentCardIndex, flashcards)}>Previous</button>
+                        <button onClick={() => handleFlip(isFlipped, setIsFlipped)}>Flip</button>
+                        <button onClick={() => handleNext(currentCardIndex, setCurrentCardIndex, flashcards)}>Next</button>
                     </div>
                     <p className="flashcard-count">
                         Card {currentCardIndex + 1} of {flashcards.length}
