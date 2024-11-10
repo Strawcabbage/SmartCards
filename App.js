@@ -1,7 +1,8 @@
 'use client';
+import axios from 'axios';
 import React, { useState } from "react";
 import './App.css';
-import { handleExtractTerms } from "./func"; // Only import handleExtractTerms if it’s used
+import { handleExtractTerms, handleCreateFlashcards } from "./func";
 
 export default function App() {
     const [text, setText] = useState("");
@@ -10,6 +11,7 @@ export default function App() {
     const [view, setView] = useState("extract");
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
+    const [fileContent, setFileContent] = useState("");
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
