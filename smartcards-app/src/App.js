@@ -1,5 +1,5 @@
 'use client'
-import axios from 'axios';
+
 import React, { useState } from "react";
 import './App.css';
 import { handleExtractTerms, handleCreateFlashcards } from "./func";
@@ -31,25 +31,11 @@ export default function App() {
         setFlashcards([...flashcards, newFlashcard]);
     };
 
-    const handleDeleteFlashcard = async (index) => {
-        try {
-            const flashcardToDelete = flashcards[index]; // Get the flashcard to be deleted
-
-            // Step 1: Send a DELETE request to the backend API to delete the flashcard from the database
-            await axios.delete(`http://localhost:3001/api/flashcards/${flashcardToDelete.id}`);
-
-            // Step 2: Remove the flashcard from the frontend state
-            const updatedFlashcards = flashcards.filter((_, i) => i !== index);
-
-            // Step 3: Update the flashcards state and adjust the current card index
-            setFlashcards(updatedFlashcards);
-            setCurrentCardIndex(Math.min(currentCardIndex, updatedFlashcards.length - 1));
-
-        } catch (error) {
-            console.error("Error deleting flashcard:", error);
-        }
+    const handleDeleteFlashcard = (index) => {
+        const updatedFlashcards = flashcards.filter((_, i) => i !== index);
+        setFlashcards(updatedFlashcards);
+        setCurrentCardIndex(Math.min(currentCardIndex, updatedFlashcards.length - 1));
     };
-
 
     const handleSaveEdit = (index, editedTerm, editedDefinition) => {
         const updatedFlashcards = [...flashcards];
