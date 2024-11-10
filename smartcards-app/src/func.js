@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Function to handle extracting key terms
-export const handleExtractTerms = async (text, setTerms) => {
+// Function to handle extracting key terms and creating flashcards
+export const handleExtractTerms = async (text, setTerms, setFlashcards, setView) => {
     try {
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
@@ -18,6 +18,9 @@ export const handleExtractTerms = async (text, setTerms) => {
         );
         const extractedTerms = response.data.choices[0].message.content.split(", ");
         setTerms(extractedTerms);
+
+        // Automatically create flashcards after terms are extracted
+        handleCreateFlashcards(extractedTerms, setFlashcards, setView);
     } catch (error) {
         console.error("Error extracting terms:", error);
     }
@@ -50,16 +53,15 @@ export const handleCreateFlashcards = async (terms, setFlashcards, setView) => {
             })
             .filter(card => card.term && card.definition); // Filter out any blank entries
 
-
-
         setFlashcards(flashcards);
         setView("flashcards");
     } catch (error) {
         console.error("Error creating flashcards:", error);
     }
 };
+
 // Function to handle file upload to the backend, which will send it to the ChatGPT API
-export const handleFileUpload = async (file, setText, setTerms) => {
+export const handleFileUpload = async (file, setText, setTerms, setFlashcards, setView) => {
     if (!file) {
         console.error("No file selected.");
         return;
@@ -77,12 +79,10 @@ export const handleFileUpload = async (file, setText, setTerms) => {
         });
 
         if (response.data && response.data.parsedContent) {
-            // Assuming the response contains the parsed content from ChatGPT
             const parsedContent = response.data.parsedContent;
 
-            // Set the parsed content into the state
             setText(parsedContent);
-            handleExtractTerms(parsedContent, setTerms); // Optionally, extract terms from the parsed content
+            handleExtractTerms(parsedContent, setTerms, setFlashcards, setView);
         }
     } catch (error) {
         console.error("Error uploading file:", error);
