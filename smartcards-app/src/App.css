@@ -11,7 +11,39 @@
   --gray: #6b7280;
 }
 
+.loginButton {
+  width: 100%;
+  height: 100vh;
+  background-color: white;
+}
 
+.loginButton:hover {
+  background-color: white;
+}
+
+#loginButton {
+  justify-content: center; /* Horizontally center */
+  align-items: center; /* Vertically center */
+  background-color: var(--blue);
+  padding: 0.75rem 1.5rem;
+  color: var(--white);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border: none;
+}
+
+#logoutButton {
+  background-color: var(--blue);
+  padding: 0.75rem 1.5rem;
+  color: var(--white);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border: none;
+}
 
 .app-container {
   min-height: 100vh;
@@ -41,6 +73,7 @@
   justify-content: center;
   gap: 1rem;
   margin-bottom: 2rem;
+  border: none;
 }
 
 .view-button {
@@ -50,6 +83,7 @@
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.2s;
+  border: none;
 }
 
 .extract { background-color: var(--blue); }
@@ -66,7 +100,7 @@
 }
 
 .text-input, .file-input {
-  width: 100%;
+  width: 90%;
   padding: 0.75rem;
   border: 1px solid var(--gray);
   border-radius: 0.5rem;
@@ -81,6 +115,7 @@
   border-radius: 0.5rem;
   font-weight: bold;
   transition: background-color 0.2s;
+  border: none;
 }
 
 .extract { background-color: var(--blue); }
@@ -90,6 +125,7 @@
   color: var(--white);
   padding: 0.5rem;
   border-radius: 0.5rem;
+  border: none;
 }
 
 .flashcard {
@@ -98,14 +134,26 @@
   justify-content: center;
 }
 
-.flashcard-inner.is-flipped .flashcard-front,
-.flashcard-inner.is-flipped .flashcard-back {
-  display: none;
+.flashcard-inner .flashcard-front {
+  display: flex;
 }
 
 .flashcard-inner.is-flipped .flashcard-front {
-  display: block;
+  display: flex;
 }
+
+.flashcard-inner.is-flipped .flashcard-back {
+  display: flex;
+}
+
+/*.flashcard-inner.is-flipped .flashcard-front,*/
+/*.flashcard-inner.is-flipped .flashcard-back {*/
+/*  display: none;*/
+/*}*/
+
+/*.flashcard-inner.is-flipped .flashcard-front {*/
+/*  display: block;*/
+/*}*/
 
 .edit-flashcards-page {
   max-width: 800px;
