@@ -1,14 +1,13 @@
 import axios from 'axios';
 
-// Function to handle extracting key terms and creating flashcards
-// Function to handle extracting key terms and creating flashcards
-export const handleExtractTerms = async (text, setTerms, setFlashcards, setView) => {
+// Extract terms function
+export const handleExtractTerms = async (text, setTerms) => {
     try {
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
                 model: "gpt-3.5-turbo",
-                messages: [{ role: "user", content: `Act as a professional tutor. After implying the subject of the text, extract the most important, salient key terms from this text: ${text}` }],
+                messages: [{ role: "user", content: `Extract key terms from the following text: ${text}` }],
             },
             {
                 headers: {
@@ -19,27 +18,21 @@ export const handleExtractTerms = async (text, setTerms, setFlashcards, setView)
         );
 
         const extractedTerms = response.data.choices[0].message.content.split(", ");
-
-        // Ensure extractedTerms is an array
         setTerms(Array.isArray(extractedTerms) ? extractedTerms : []);
-
-        // Automatically create flashcards after terms are extracted
-        await handleCreateFlashcards(extractedTerms, setFlashcards, setView);
     } catch (error) {
         console.error("Error extracting terms:", error);
     }
 };
 
-// Function to handle creating flashcards from extracted terms
-export const handleCreateFlashcards = async (terms, setFlashcards, setView) => {
+// Create flashcards function
+export const handleCreateFlashcards = async (terms, setFlashcards, setView, setCurrentSet) => {
     try {
-        // Check if terms is an array; if not, log an error and return
-        if (!Array.isArray(terms)) {
-            console.error("Expected terms to be an array, but got:", terms);
+        if (!Array.isArray(terms) || terms.length === 0) {
+            console.error("Expected terms to be a non-empty array, but got:", terms);
             return;
         }
 
-        const prompt = `Create concise definitions for these terms: ${terms.join(", ")}`;
+        const prompt = `Define each of the following terms:\n${terms.join("\n")}`;
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
@@ -61,9 +54,27 @@ export const handleCreateFlashcards = async (terms, setFlashcards, setView) => {
                 const definition = definitionParts.join(": ").trim();
                 return { term: term.trim(), definition };
             })
-            .filter(card => card.term && card.definition); // Filter out any blank entries
+            .filter(card => card.term && card.definition);
 
-        setFlashcards(flashcards);
+        // Create a set and link flashcards with its ID
+        const setData = { name: "New Set" };
+        const setResponse = await axios.post("http://localhost:8080/sets/create", setData, {
+            headers: { "Content-Type": "application/json" }
+        });
+        const createdSet = setResponse.data;
+        setCurrentSet(createdSet);
+
+        const flashcardsWithSetId = flashcards.map(flashcard => ({
+            term: flashcard.term,
+            definition: flashcard.definition,
+            set_num: createdSet.id
+        }));
+
+        await axios.post("http://localhost:8080/flashcards/batchCreate", flashcardsWithSetId, {
+            headers: { "Content-Type": "application/json" }
+        });
+
+        setFlashcards(flashcardsWithSetId);
         setView("flashcards");
     } catch (error) {
         console.error("Error creating flashcards:", error);

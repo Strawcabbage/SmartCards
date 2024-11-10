@@ -1,244 +1,193 @@
 @import url('https://fonts.googleapis.com/css2?family=Joan&display=swap');
 
 :root {
-  --background: #f3f4f6;
-  --dark-blue: #1e3a8a;
-  --blue: #3b82f6;
-  --green: #10b981;
-  --yellow: #f59e0b;
-  --red: #ef4444;
-  --white: #ffffff;
-  --gray: #6b7280;
+    --color-background: #1c1e42; /* Deep blue for a more inviting, modern feel */
+    --color-primary-blue: #4b8cfb; /* Bright primary blue for key elements */
+    --color-accent-purple: #a78bfa; /* Light purple accent */
+    --color-accent-pink: #ff6bbf; /* Soft pink for contrast */
+    --color-accent-orange: #ff7851; /* Coral-orange pop of color */
+    --color-white: #ffffff;
+    --color-gray: #7e7e91; /* Softer gray */
+    --color-card-bg: rgba(35, 37, 60, 0.95); /* Darkened background for cards */
 }
 
+body, button, input, textarea {
+    font-family: 'Joan', sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-white);
+    transition: background-color 0.3s ease;
+}
 
-
+/* General Layout */
 .app-container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--background);
-  padding: 2rem;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    animation: fadeInBackground 1s ease-in-out;
+}
+
+@keyframes fadeInBackground {
+    from { background-color: #0a0a1e; }
+    to { background-color: var(--color-background); }
 }
 
 .content-container {
-  width: 100%;
-  max-width: 800px;
-  text-align: center;
-  padding: 1rem;
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #1e254a, #2c345d);
+    border-radius: 1rem;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+    animation: fadeInContent 1s ease-out;
 }
 
+@keyframes fadeInContent {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Titles */
 .app-title {
-  font-size: 2.5rem;
-  color: var(--dark-blue);
-  margin-bottom: 1.5rem;
-  font-weight: bold;
+    font-size: 3rem;
+    color: var(--color-primary-blue);
+    margin-bottom: 1.5rem;
+    font-weight: bold;
+    background: linear-gradient(90deg, var(--color-primary-blue), var(--color-accent-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: colorShift 5s ease-in-out infinite;
 }
 
-.button-group {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
+@keyframes colorShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
-.view-button {
-  padding: 0.75rem 1.5rem;
-  color: var(--white);
-  border-radius: 0.5rem;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
+/* Button Styling */
+.button-group, .bottom-button-group {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 1rem;
+    margin: 1.5rem 0;
 }
 
-.extract { background-color: var(--blue); }
-.view { background-color: var(--green); }
-.edit { background-color: var(--yellow); }
-.view-button:hover { opacity: 0.9; }
-
-.section {
-  background-color: var(--white);
-  padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  margin-top: 1rem;
+button, .loginButton, #logoutButton, .add-flashcard-button, .save-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+    color: var(--color-white);
+    background: linear-gradient(135deg, var(--color-accent-pink), var(--color-primary-blue));
+    border: none;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255, 107, 191, 0.4);
+    position: relative;
+    overflow: hidden;
 }
 
-.text-input, .file-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--gray);
-  border-radius: 0.5rem;
-  margin-top: 1rem;
+/* Button Hover Effects with Glow */
+button:hover {
+    transform: translateY(-4px);
+    background: linear-gradient(135deg, var(--color-accent-orange), var(--color-accent-purple));
+    box-shadow: 0 8px 20px rgba(167, 139, 250, 0.6), 0 0 15px rgba(255, 120, 81, 0.5);
 }
 
-.action-button {
-  width: 100%;
-  padding: 0.75rem;
-  margin-top: 1rem;
-  color: var(--white);
-  border-radius: 0.5rem;
-  font-weight: bold;
-  transition: background-color 0.2s;
+button:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 8px rgba(255, 107, 191, 0.4);
 }
 
-.extract { background-color: var(--blue); }
-.add { background-color: var(--green); }
-.delete-button {
-  background-color: var(--red);
-  color: var(--white);
-  padding: 0.5rem;
-  border-radius: 0.5rem;
+/* Loading Spinner for Buttons */
+button.loading::before {
+    content: "";
+    border: 3px solid var(--color-primary-blue);
+    border-top: 3px solid var(--color-white);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    animation: spin 0.8s linear infinite;
+    box-shadow: 0 0 8px rgba(75, 140, 251, 0.6);
 }
 
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Inputs */
+.text-input, .file-input, input[type="text"], textarea, select {
+    width: 90%;
+    padding: 0.75rem;
+    margin-top: 1rem;
+    border: 1px solid var(--color-gray);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    background-color: var(--color-card-bg);
+    color: var(--color-white);
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.text-input:focus, .file-input:focus, input[type="text"]:focus, textarea:focus, select:focus {
+    border-color: var(--color-primary-blue);
+    box-shadow: 0 4px 12px rgba(75, 140, 251, 0.3);
+}
+
+/* Flashcard Styles */
 .flashcard {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    perspective: 1000px;
+    width: 300px;
+    height: 200px;
+    margin: 1rem auto;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    animation: fadeInFlashcard 0.5s ease-out;
 }
 
-.flashcard-inner .flashcard-front {
-  display: flex;
-}
-
-.flashcard-inner.is-flipped .flashcard-front {
-  display: flex;
-}
-
-.flashcard-inner.is-flipped .flashcard-back {
-  display: flex;
-}
-
-
-.edit-flashcards-page {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 1.5rem;
-  background-color: var(--white);
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: 'Joan', sans-serif;
-  color: var(--darkBlue);
-}
-
-.page-title {
-  text-align: center;
-  color: var(--darkBlue);
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.section {
-  margin-bottom: 2rem;
-}
-
-.section-title {
-  font-size: 1.5rem;
-  color: var(--teal);
-  margin-bottom: 1rem;
-}
-
-label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-
-input[type="text"],
-textarea,
-select {
-  width: 100%;
-  padding: 0.75rem;
-  margin-bottom: 1rem;
-  border: 1px solid var(--darkBlue);
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-.flashcard-item {
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  background-color: var(--mint);
-  border-radius: 8px;
-}
-
-.add-flashcard-button,
-.save-button {
-  background-color: var(--teal);
-  color: var(--white);
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-  display: block;
-  margin: 1rem auto;
-  text-align: center;
-}
-
-.add-flashcard-button:hover,
-.save-button:hover {
-  background-color: var(--darkBlue);
-}
-
-.save-button {
-  background-color: var(--darkBlue);
-  margin-top: 2rem;
-}
-:root {
-
-  --white: #FFFFFF;
-  --black: #000000;
-  --darkBlue: #00091D;
-  --navy: #031927;
-  --teal: #037171;
-  --mint: #00C3C3;
-}
-
-
-/* Add this to ensure flipping works properly */
-.flashcard {
-  perspective: 1000px;
-  width: 300px;
-  height: 200px;
-  margin: 0 auto;
+@keyframes fadeInFlashcard {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 .flashcard-inner {
-  width: 100%;
-  height: 100%;
-  transition: transform 0.6s;
-  transform-style: preserve-3d;
-  cursor: pointer;
-  position: relative;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.flashcard-inner.is-flipped {
-  transform: rotateY(180deg);
+.flashcard:hover .flashcard-inner {
+    transform: rotateY(180deg);
 }
 
-.flashcard-front,
+.flashcard-front, .flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-white);
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    background-color: var(--color-card-bg);
+}
+
+.flashcard-front {
+    background-color: var(--color-card-bg);
+}
+
 .flashcard-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.flashcard-back {
-  transform: rotateY(180deg);
-
+    background-color: var(--color-accent-purple);
+    transform: rotateY(180deg);
 }
