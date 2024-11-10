@@ -99,13 +99,16 @@ export default function App() {
             <>
 
 
-                <button className="loginButton" onClick={() => (setLoginView("authorized"))}>
+                <button className="loginButton">
                     <div className = "app-title-div">
                         <img src="SmartCard_LogoBlueOutL.png" className="app-title-image"></img>
                         <h1 className="app-title">SmartCards</h1>
                     </div>
                     <LoginButton/>
-                    <Profile/>
+                    <button style = {{border: "none", backgroundColor: "white"}} onClick={() => (setLoginView("authorized"))}>
+                        <Profile/>
+                    </button>
+
                 </button>
             </>
 

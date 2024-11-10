@@ -4,10 +4,10 @@ const Profile = () => {
     const { user, isAuthenticated } = useAuth0();
     return (
         isAuthenticated && (
-            <div>
+            <div style={{cursor: "pointer"}}>
                 {/*style={{cursor: "pointer", border: "2px solid black", borderRadius: "30px", width: "fit-content", padding: "40px 80px 40px 80xp", margin: "auto"}}*/}
                 <h1>Welcome Back, {user?.name}</h1>
-                <h2>Click anywhere to continue</h2>
+                <h2>Click here to continue</h2>
             </div>
 
             // <article>
