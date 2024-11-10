@@ -1,0 +1,241 @@
+@import url('https://fonts.googleapis.com/css2?family=Joan&display=swap');
+
+:root {
+  --background: #f3f4f6;
+  --dark-blue: #1e3a8a;
+  --blue: #3b82f6;
+  --green: #10b981;
+  --yellow: #f59e0b;
+  --red: #ef4444;
+  --white: #ffffff;
+  --gray: #6b7280;
+}
+
+
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--background);
+  padding: 2rem;
+}
+
+.content-container {
+  width: 100%;
+  max-width: 800px;
+  text-align: center;
+  padding: 1rem;
+}
+
+.app-title {
+  font-size: 2.5rem;
+  color: var(--dark-blue);
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.view-button {
+  padding: 0.75rem 1.5rem;
+  color: var(--white);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.extract { background-color: var(--blue); }
+.view { background-color: var(--green); }
+.edit { background-color: var(--yellow); }
+.view-button:hover { opacity: 0.9; }
+
+.section {
+  background-color: var(--white);
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 1rem;
+}
+
+.text-input, .file-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--gray);
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+}
+
+.action-button {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  color: var(--white);
+  border-radius: 0.5rem;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.extract { background-color: var(--blue); }
+.add { background-color: var(--green); }
+.delete-button {
+  background-color: var(--red);
+  color: var(--white);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.flashcard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flashcard-inner.is-flipped .flashcard-front,
+.flashcard-inner.is-flipped .flashcard-back {
+  display: none;
+}
+
+.flashcard-inner.is-flipped .flashcard-front {
+  display: block;
+}
+
+.edit-flashcards-page {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Joan', sans-serif;
+  color: var(--darkBlue);
+}
+
+.page-title {
+  text-align: center;
+  color: var(--darkBlue);
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  color: var(--teal);
+  margin-bottom: 1rem;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+input[type="text"],
+textarea,
+select {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--darkBlue);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.flashcard-item {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--mint);
+  border-radius: 8px;
+}
+
+.add-flashcard-button,
+.save-button {
+  background-color: var(--teal);
+  color: var(--white);
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: block;
+  margin: 1rem auto;
+  text-align: center;
+}
+
+.add-flashcard-button:hover,
+.save-button:hover {
+  background-color: var(--darkBlue);
+}
+
+.save-button {
+  background-color: var(--darkBlue);
+  margin-top: 2rem;
+}
+:root {
+  /*
+  Currrent Colors:
+  */
+  --white: #FFFFFF;
+  --black: #000000;
+  --darkBlue: #00091D;
+  --navy: #031927;
+  --teal: #037171;
+  --mint: #00C3C3;
+}
+
+
+
+.flashcard {
+  perspective: 1000px;
+  width: 300px;
+  height: 200px;
+  margin: 0 auto;
+}
+
+.flashcard-inner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  position: relative;
+}
+
+.flashcard-inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.flashcard-front,
+.flashcard-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.flashcard-back {
+  transform: rotateY(180deg);
+}
