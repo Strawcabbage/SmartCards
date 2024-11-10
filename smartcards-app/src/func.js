@@ -48,6 +48,13 @@ export const handleCreateFlashcards = async (terms, setFlashcards, setView) => {
             })
             .filter(card => card.term && card.definition); // Filter out any blank entries
 
+        const savedFlashcards = await Promise.all(
+            flashcards.map(async (flashcard) => {
+                const response = await axios.post("http://localhost:3001/api/flashcards", flashcard);
+                return response.data; // Return the saved flashcard data from the backend
+            })
+        );
+
         setFlashcards(flashcards);
         setView("flashcards");
     } catch (error) {
