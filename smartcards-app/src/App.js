@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import axios from 'axios';
 import React, { useState } from "react";
 import './App.css';
@@ -11,6 +11,31 @@ export default function App() {
     const [view, setView] = useState("extract");
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
+    const [fileContent, setFileContent] = useState("");
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file && (file.type === 'text/plain' || file.name.endsWith('.txt'))) {
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const result = e.target.result;
+                if (typeof result === "string") {
+                    setText(result);  // Set the file content as the text input
+                } else {
+                    console.error("Unexpected file format: result is not a string.");
+                }
+            };
+
+            reader.onerror = (e) => {
+                console.error("File reading error:", e.target.error);
+            };
+
+            reader.readAsText(file);
+        } else {
+            alert("Please select a plain text (.txt) file");
+        }
+    };
 
     const handleNext = () => {
         setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
@@ -64,6 +89,36 @@ export default function App() {
                     <button onClick={() => setView("flashcards")} className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">View Flashcards</button>
                     <button onClick={() => setView("edit")} className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors">Edit Flashcards</button>
                 </div>
+
+                {view === "extract" && (
+                    <div className="bg-white rounded-lg shadow p-6">
+                        <h2 className="text-xl font-semibold mb-4">Input Text to Extract Key Terms</h2>
+                        <input type="file" onChange={handleFileChange} accept=".txt" className="mb-4"/>
+                        <textarea
+                            value={fileContent}
+                            readOnly
+                            rows={6}
+                            className="w-full p-2 border rounded mb-4"
+                            placeholder="File content will appear here..."
+                        />
+                        <textarea
+                            value={text}
+                            onChange={(e) => setText(e.target.value)}
+                            rows={6}
+                            className="w-full p-2 border rounded mb-4"
+                            placeholder="Enter text here..."
+                        />
+                        <button onClick={() => handleExtractTerms(text, setTerms)} className="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">Extract Terms</button>
+                        <div className="mt-4">
+                            <h3 className="text-lg font-semibold mb-2">Extracted Key Terms:</h3>
+                            <ul className="list-disc pl-5">
+                                {terms.map((term, index) => (
+                                    <li key={index}>{term}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                )}
 
                 {view === "extract" && (
                     <div className="bg-white rounded-lg shadow p-6">
