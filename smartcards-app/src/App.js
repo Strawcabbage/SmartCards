@@ -17,16 +17,31 @@ export default function App() {
     const [isFlipped, setIsFlipped] = useState(false);
     const [currentSet, setCurrentSet] = useState(null);  // Track the current set
 
-    const handleCreateFlashcardsClick = async () => {
+    const handleExtractAndCreateFlashcards = async () => {
         try {
-            // Convert text to terms array if it's a single string
-            const termsArray = Array.isArray(text) ? text : text.split(' ').filter(word => word.length > 2);
+// First, extract terms
+            await handleExtractTerms(text, setTerms);
 
-            await handleCreateFlashcards(termsArray, setFlashcards, setView, setCurrentSet);
-        } catch (error) {
-            console.error("Error creating flashcards:", error);
-        }
-    };
+
+// Log terms after extraction to confirm structure and content
+
+
+            console.log("Extracted terms:", terms);
+
+            // Ensure terms is not empty before proceeding
+            if (!Array.isArray(terms) || terms.length === 0) {
+
+
+                console.error("No terms were extracted or terms is not an array:", terms);
+                return;
+            }
+
+// Then, create flashcards with extracted terms
+        await handleCreateFlashcards(terms, setFlashcards, setView, setCurrentSet);
+    } catch (error) {
+        console.error("Error in extract and create sequence:", error);
+    }
+};
 
     const handleAddFlashcard = async () => {
         if (!currentSet) {
@@ -146,6 +161,7 @@ export default function App() {
                         </div>
 
                             {/* Extract View */}
+                            {/* Extract View */}
                             {view === "extract" && (
                                 <div className="section">
                                     <h2>Input Text to Extract Key Terms</h2>
@@ -156,7 +172,7 @@ export default function App() {
                                         className="text-input"
                                         placeholder="Enter text here..."
                                     />
-                                    <button onClick={handleCreateFlashcardsClick} className="action-button add">
+                                    <button onClick={handleExtractAndCreateFlashcards} className="action-button add">
                                         Extract Terms and Create Flashcards
                                     </button>
                                     <ul className="term-list">

@@ -1,14 +1,13 @@
 import axios from 'axios';
 
-// Function to handle extracting key terms and creating flashcards
-// Function to handle extracting key terms and creating flashcards
-export const handleExtractTerms = async (text, setTerms, setFlashcards, setView) => {
+// Extract terms function
+export const handleExtractTerms = async (text, setTerms) => {
     try {
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
                 model: "gpt-3.5-turbo",
-                messages: [{ role: "user", content: `Act as a professional tutor. After implying the subject of the text, extract the most important, salient key terms from this text: ${text}` }],
+                messages: [{ role: "user", content: `Extract key terms from the following text: ${text}` }],
             },
             {
                 headers: {
@@ -19,17 +18,13 @@ export const handleExtractTerms = async (text, setTerms, setFlashcards, setView)
         );
 
         const extractedTerms = response.data.choices[0].message.content.split(", ");
-
-        // Ensure extractedTerms is an array
         setTerms(Array.isArray(extractedTerms) ? extractedTerms : []);
-
-        // Automatically create flashcards after terms are extracted
-        await handleCreateFlashcards(extractedTerms, setFlashcards, setView);
     } catch (error) {
         console.error("Error extracting terms:", error);
     }
 };
 
+// Create flashcards function
 export const handleCreateFlashcards = async (terms, setFlashcards, setView, setCurrentSet) => {
     try {
         if (!Array.isArray(terms) || terms.length === 0) {
@@ -37,8 +32,7 @@ export const handleCreateFlashcards = async (terms, setFlashcards, setView, setC
             return;
         }
 
-        // Generate definitions for each term
-        const prompt = `For each of the following terms, provide a brief definition:\n${terms.join("\n")}`;
+        const prompt = `Define each of the following terms:\n${terms.join("\n")}`;
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
@@ -60,34 +54,28 @@ export const handleCreateFlashcards = async (terms, setFlashcards, setView, setC
                 const definition = definitionParts.join(": ").trim();
                 return { term: term.trim(), definition };
             })
-            .filter(card => card.term && card.definition); // Ensure each card has term & definition
+            .filter(card => card.term && card.definition);
 
-        // Create the set and get its ID
-        const setData = { name: "New Set" };  // Customize the name if needed
+        // Create a set and link flashcards with its ID
+        const setData = { name: "New Set" };
         const setResponse = await axios.post("http://localhost:8080/sets/create", setData, {
             headers: { "Content-Type": "application/json" }
         });
         const createdSet = setResponse.data;
-        setCurrentSet(createdSet); // Update current set in frontend state
+        setCurrentSet(createdSet);
 
-        // Associate flashcards with the created set ID
         const flashcardsWithSetId = flashcards.map(flashcard => ({
             term: flashcard.term,
             definition: flashcard.definition,
             set_num: createdSet.id
         }));
 
-        // Batch POST request to add all flashcards in a single API call
         await axios.post("http://localhost:8080/flashcards/batchCreate", flashcardsWithSetId, {
             headers: { "Content-Type": "application/json" }
         });
 
-        // Update frontend state with the flashcards
         setFlashcards(flashcardsWithSetId);
         setView("flashcards");
-
-        console.log("Set and flashcards created successfully:", createdSet);
-
     } catch (error) {
         console.error("Error creating flashcards:", error);
     }
