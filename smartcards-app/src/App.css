@@ -12,6 +12,44 @@
   --mint: #00C3C3;
 }
 
+.body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: var(--navy);
+  color: white;
+}
+
+.titleCont {
+  width: 100%;
+  padding: 10px 30px 10px 30px;
+
+  background-color: var(--darkBlue);
+  color: white;
+}
+
+.leftHalf {
+  float: left;
+  width: 50%;
+  background-color: red;
+}
+
+.rightHalf {
+  float: left;
+  width: 50%;
+  background-color: green;
+}
+
+.extractedTermsCont {
+  /*width: 50%;*/
+  padding: 10px 30px 10px 10px;
+  background-color: var(--darkBlue);
+  text-align: right;
+}
+
+.flashcardCont {
+
+}
 
 
 .flashcard {
