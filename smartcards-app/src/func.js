@@ -1,12 +1,13 @@
-import axios from "axios";
+import axios from 'axios';
 
+// Function to handle extracting key terms
 export const handleExtractTerms = async (text, setTerms) => {
     try {
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
                 model: "gpt-3.5-turbo",
-                messages: [{ role: "user", content: `Extract key terms from this text: ${text}` }],
+                messages: [{ role: "user", content: `Act as a professional tutor. After implying the subject of the text, extract the most important, salient key terms from this text: ${text}` }],
             },
             {
                 headers: {
@@ -22,6 +23,7 @@ export const handleExtractTerms = async (text, setTerms) => {
     }
 };
 
+// Function to handle creating flashcards from extracted terms
 export const handleCreateFlashcards = async (terms, setFlashcards, setView) => {
     try {
         const prompt = `Create concise definitions for these terms: ${terms.join(", ")}`;
@@ -56,17 +58,33 @@ export const handleCreateFlashcards = async (terms, setFlashcards, setView) => {
         console.error("Error creating flashcards:", error);
     }
 };
+// Function to handle file upload to the backend, which will send it to the ChatGPT API
+export const handleFileUpload = async (file, setText, setTerms) => {
+    if (!file) {
+        console.error("No file selected.");
+        return;
+    }
 
-export const handleNext = (currentIndex, setCurrentCardIndex, flashcards, setIsFlipped) => {
-    setIsFlipped(false); // Flip to the front (key term)
-    setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
+    const formData = new FormData();
+    formData.append('file', file);
 
-};
+    try {
+        // Sending the file to the backend for processing by the ChatGPT API
+        const response = await axios.post('http://localhost:3001/upload', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
 
-export const handlePrevious = (currentIndex, setCurrentCardIndex, flashcards) => {
-    setCurrentCardIndex((currentIndex - 1 + flashcards.length) % flashcards.length);
-};
+        if (response.data && response.data.parsedContent) {
+            // Assuming the response contains the parsed content from ChatGPT
+            const parsedContent = response.data.parsedContent;
 
-export const handleFlip = (isFlipped, setIsFlipped) => {
-    setIsFlipped(!isFlipped);
+            // Set the parsed content into the state
+            setText(parsedContent);
+            handleExtractTerms(parsedContent, setTerms); // Optionally, extract terms from the parsed content
+        }
+    } catch (error) {
+        console.error("Error uploading file:", error);
+    }
 };

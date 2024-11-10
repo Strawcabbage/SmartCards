@@ -35,7 +35,6 @@ export default function App() {
         try {
             const flashcardToDelete = flashcards[index]; // Get the flashcard to be deleted
 
-
             // Step 2: Remove the flashcard from the frontend state
             const updatedFlashcards = flashcards.filter((_, i) => i !== index);
 
@@ -48,11 +47,33 @@ export default function App() {
         }
     };
 
-
     const handleSaveEdit = (index, editedTerm, editedDefinition) => {
         const updatedFlashcards = [...flashcards];
         updatedFlashcards[index] = { term: editedTerm, definition: editedDefinition };
         setFlashcards(updatedFlashcards);
+    };
+
+    // Handle file upload and send to backend for processing by ChatGPT API
+    import axios from 'axios';
+
+    const handleFileUpload = (event) => {
+        const file = event.target.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+
+        axios.post('http://localhost:8080/upload',
+            formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+            .then(response => {
+                console.log('File uploaded successfully:', response.data);
+            })
+            .catch(error => {
+                console.error('Error uploading file:', error);
+
+            });
     };
 
     return (
@@ -68,6 +89,15 @@ export default function App() {
                 {view === "extract" && (
                     <div className="bg-white rounded-lg shadow p-6">
                         <h2 className="text-xl font-semibold mb-4">Input Text to Extract Key Terms</h2>
+
+                        {/* File Upload Section */}
+                        <input
+                            type="file"
+                            accept=".txt,.docx,.pdf"
+                            onChange={handleFileUpload}
+                            className="w-full p-2 border rounded mb-4"
+                        />
+
                         <textarea
                             value={text}
                             onChange={(e) => setText(e.target.value)}
@@ -142,7 +172,6 @@ export default function App() {
                                     onChange={(e) => handleSaveEdit(index, flashcard.term, e.target.value)}
                                     className="w-full p-2 border rounded mb-2"
                                     placeholder="Definition"
-                                    rows={3}
                                 />
                                 <button onClick={() => handleDeleteFlashcard(index)} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">Delete</button>
                             </div>
