@@ -1,3 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Joan&display=swap');
+
+:root {
+  /*
+  Currrent Colors:
+  */
+  --white: #FFFFFF;
+  --black: #000000;
+  --darkBlue: #00091D;
+  --navy: #031927;
+  --teal: #037171;
+  --mint: #00C3C3;
+}
+
+
+
 .flashcard {
   perspective: 1000px;
   width: 300px;
