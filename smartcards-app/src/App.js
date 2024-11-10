@@ -3,31 +3,55 @@ import axios from 'axios';
 import React, { useState } from "react";
 import './App.css';
 import { handleExtractTerms, handleCreateFlashcards } from "./func";
-import LoginButton from "./components/LoginButtion"; // Only import handleExtractTerms if it’s used
+import LoginButton from "./components/LoginButtion";
 import LogoutButton from "./components/LogoutButton";
 import Profile from "./components/Profile";
-
 
 export default function App() {
     const [text, setText] = useState("");
     const [terms, setTerms] = useState([]);
     const [flashcards, setFlashcards] = useState([]);
     const [view, setView] = useState("extract");
-    const [loginView, setLoginView] = useState("unauthorized")
+    const [loginView, setLoginView] = useState("unauthorized");
     const [currentCardIndex, setCurrentCardIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
-
-    function handleFileChange() {
-
-    }
+    const [currentSet, setCurrentSet] = useState(null);  // Track the current set
 
     const handleCreateFlashcardsClick = async () => {
         try {
-            await handleExtractTerms(text, setTerms, setFlashcards, setView);
+            // Convert text to terms array if it's a single string
+            const termsArray = Array.isArray(text) ? text : text.split(' ').filter(word => word.length > 2);
+
+            await handleCreateFlashcards(termsArray, setFlashcards, setView, setCurrentSet);
         } catch (error) {
             console.error("Error creating flashcards:", error);
         }
     };
+
+    const handleAddFlashcard = async () => {
+        if (!currentSet) {
+            console.error("No set selected.");
+            return;
+        }
+
+        const newFlashcard = { term: "New Term", definition: "New Definition", set_id: currentSet.id };
+
+        try {
+            // Add the new flashcard to the backend database
+            const response = await axios.post("http://localhost:8080/flashcards/create", newFlashcard, {
+                headers: { "Content-Type": "application/json" }
+            });
+
+            // Update frontend state to include the new flashcard
+            setFlashcards([...flashcards, response.data]);
+        } catch (error) {
+            console.error("Error adding flashcard:", error);
+        }
+    };
+
+    function handleFileChange() {
+
+    }
 
     const handleNext = () => {
         setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
@@ -43,20 +67,18 @@ export default function App() {
         setIsFlipped(!isFlipped);
     };
 
-    const handleAddFlashcard = () => {
-        const newFlashcard = { term: "New Term", definition: "New Definition" };
-        setFlashcards([...flashcards, newFlashcard]);
-    };
-
-    const handleDeleteFlashcard = async (index) => {
+    const handleDeleteFlashcard = async (flashcardId) => {
         try {
-            const flashcardToDelete = flashcards[index]; // Get the flashcard to be deleted
+            // Send DELETE request to the backend to remove the flashcard from the database
+            await axios.delete(`http://localhost:8080/flashcards/delete/${flashcardId}`, {
+                headers: { "Content-Type": "application/json" }
+            });
 
-            // Step 2: Remove the flashcard from the frontend state
-            const updatedFlashcards = flashcards.filter((_, i) => i !== index);
-
-            // Step 3: Update the flashcards state and adjust the current card index
+            // Remove the flashcard from the frontend state by filtering out the deleted one
+            const updatedFlashcards = flashcards.filter(flashcard => flashcard.id !== flashcardId);
             setFlashcards(updatedFlashcards);
+
+            // Adjust the current card index if necessary
             setCurrentCardIndex(Math.min(currentCardIndex, updatedFlashcards.length - 1));
 
         } catch (error) {
@@ -188,9 +210,8 @@ export default function App() {
                                             className="text-input"
                                             placeholder="Definition"
                                         />
-                                        <button onClick={() => handleDeleteFlashcard(index)}
-                                                className="delete-button">Delete
-                                        </button>
+
+                                        <button onClick={() => handleDeleteFlashcard(flashcard.id)} className="delete-button">Delete</button>
                                     </div>
                                 ))}
                                 <button onClick={handleAddFlashcard} className="action-button add">Add New Flashcard
