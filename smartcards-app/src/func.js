@@ -30,16 +30,15 @@ export const handleExtractTerms = async (text, setTerms, setFlashcards, setView)
     }
 };
 
-// Function to handle creating flashcards from extracted terms
-export const handleCreateFlashcards = async (terms, setFlashcards, setView) => {
+export const handleCreateFlashcards = async (terms, setFlashcards, setView, setCurrentSet) => {
     try {
-        // Check if terms is an array; if not, log an error and return
-        if (!Array.isArray(terms)) {
-            console.error("Expected terms to be an array, but got:", terms);
+        if (!Array.isArray(terms) || terms.length === 0) {
+            console.error("Expected terms to be a non-empty array, but got:", terms);
             return;
         }
 
-        const prompt = `Create concise definitions for these terms: ${terms.join(", ")}`;
+        // Generate definitions for each term
+        const prompt = `For each of the following terms, provide a brief definition:\n${terms.join("\n")}`;
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
             {
@@ -61,10 +60,34 @@ export const handleCreateFlashcards = async (terms, setFlashcards, setView) => {
                 const definition = definitionParts.join(": ").trim();
                 return { term: term.trim(), definition };
             })
-            .filter(card => card.term && card.definition); // Filter out any blank entries
+            .filter(card => card.term && card.definition); // Ensure each card has term & definition
 
-        setFlashcards(flashcards);
+        // Create the set and get its ID
+        const setData = { name: "New Set" };  // Customize the name if needed
+        const setResponse = await axios.post("http://localhost:8080/sets/create", setData, {
+            headers: { "Content-Type": "application/json" }
+        });
+        const createdSet = setResponse.data;
+        setCurrentSet(createdSet); // Update current set in frontend state
+
+        // Associate flashcards with the created set ID
+        const flashcardsWithSetId = flashcards.map(flashcard => ({
+            term: flashcard.term,
+            definition: flashcard.definition,
+            set_num: createdSet.id
+        }));
+
+        // Batch POST request to add all flashcards in a single API call
+        await axios.post("http://localhost:8080/flashcards/batchCreate", flashcardsWithSetId, {
+            headers: { "Content-Type": "application/json" }
+        });
+
+        // Update frontend state with the flashcards
+        setFlashcards(flashcardsWithSetId);
         setView("flashcards");
+
+        console.log("Set and flashcards created successfully:", createdSet);
+
     } catch (error) {
         console.error("Error creating flashcards:", error);
     }
