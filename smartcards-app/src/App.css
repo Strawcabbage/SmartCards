@@ -66,6 +66,20 @@
   color: var(--dark-blue);
   margin-bottom: 1.5rem;
   font-weight: bold;
+  display: inline-block;
+}
+
+.app-title-image {
+  width: 75px;
+  position: relative;
+  top: 15px;
+  left: 2px;
+  display: inline-block;
+  /*height: auto;*/
+}
+
+.app-title-div {
+
 }
 
 .button-group {
@@ -156,15 +170,6 @@
 .flashcard-inner.is-flipped .flashcard-back {
   display: flex;
 }
-
-/*.flashcard-inner.is-flipped .flashcard-front,*/
-/*.flashcard-inner.is-flipped .flashcard-back {*/
-/*  display: none;*/
-/*}*/
-
-/*.flashcard-inner.is-flipped .flashcard-front {*/
-/*  display: block;*/
-/*}*/
 
 .edit-flashcards-page {
   max-width: 800px;
@@ -257,8 +262,6 @@ textarea {
   --teal: #037171;
   --mint: #00C3C3;
 }
-
-
 
 .flashcard {
   perspective: 1000px;

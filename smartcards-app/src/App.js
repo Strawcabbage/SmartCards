@@ -100,6 +100,10 @@ export default function App() {
 
 
                 <button className="loginButton" onClick={() => (setLoginView("authorized"))}>
+                    <div className = "app-title-div">
+                        <img src="SmartCard_LogoBlueOutL.png" className="app-title-image"></img>
+                        <h1 className="app-title">SmartCards</h1>
+                    </div>
                     <LoginButton/>
                     <Profile/>
                 </button>
