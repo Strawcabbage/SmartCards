@@ -98,14 +98,18 @@
   justify-content: center;
 }
 
-.flashcard-inner.is-flipped .flashcard-front,
-.flashcard-inner.is-flipped .flashcard-back {
-  display: none;
+.flashcard-inner .flashcard-front {
+  display: flex;
 }
 
 .flashcard-inner.is-flipped .flashcard-front {
-  display: block;
+  display: flex;
 }
+
+.flashcard-inner.is-flipped .flashcard-back {
+  display: flex;
+}
+
 
 .edit-flashcards-page {
   max-width: 800px;
@@ -188,9 +192,7 @@ textarea {
   margin-top: 2rem;
 }
 :root {
-  /*
-  Currrent Colors:
-  */
+
   --white: #FFFFFF;
   --black: #000000;
   --darkBlue: #00091D;
@@ -200,7 +202,7 @@ textarea {
 }
 
 
-
+/* Add this to ensure flipping works properly */
 .flashcard {
   perspective: 1000px;
   width: 300px;
@@ -238,4 +240,5 @@ textarea {
 
 .flashcard-back {
   transform: rotateY(180deg);
+
 }
