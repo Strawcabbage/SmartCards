@@ -118,6 +118,17 @@
   border: none;
 }
 
+.nav-button {
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 1rem;
+  color: var(--blue);
+  border-radius: 0.5rem;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  border: none;
+}
+
 .extract { background-color: var(--blue); }
 .add { background-color: var(--green); }
 .delete-button {

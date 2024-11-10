@@ -114,9 +114,6 @@ export default function App() {
                     <div className="app-container">
                         <div className="content-container">
 
-
-
-
                             <h1 className="app-title">SmartCards</h1>
                         <div className="button-group">
                             <button onClick={() => setView("extract")} className="view-button extract">Extract Key Terms
