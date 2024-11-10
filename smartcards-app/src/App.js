@@ -35,8 +35,6 @@ export default function App() {
         try {
             const flashcardToDelete = flashcards[index]; // Get the flashcard to be deleted
 
-            // Step 1: Send a DELETE request to the backend API to delete the flashcard from the database
-            await axios.delete(`http://localhost:3001/api/flashcards/${flashcardToDelete.id}`);
 
             // Step 2: Remove the flashcard from the frontend state
             const updatedFlashcards = flashcards.filter((_, i) => i !== index);
