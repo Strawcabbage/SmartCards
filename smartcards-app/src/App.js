@@ -54,7 +54,7 @@ export default function App() {
     };
 
     // Handle file upload and send to backend for processing by ChatGPT API
-    import axios from 'axios';
+
 
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
