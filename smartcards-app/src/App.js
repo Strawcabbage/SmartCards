@@ -21,6 +21,14 @@ export default function App() {
 
     }
 
+    const handleCreateFlashcardsClick = async () => {
+        try {
+            await handleExtractTerms(text, setTerms, setFlashcards, setView);
+        } catch (error) {
+            console.error("Error creating flashcards:", error);
+        }
+    };
+
     const handleNext = () => {
         setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
         setIsFlipped(false);
@@ -118,26 +126,25 @@ export default function App() {
                             <button onClick={() => setView("edit")} className="view-button edit">Edit Flashcards</button>
                         </div>
 
-                        {/* Extract View */}
-                        {view === "extract" && (
-                            <div className="section">
-                                <h2>Input Text to Extract Key Terms</h2>
-                                <input type="file" onChange={handleFileChange} accept=".txt" className="file-input"/>
-                                <textarea
-                                    value={text}
-                                    onChange={(e) => setText(e.target.value)}
-                                    rows={6}
-                                    className="text-input"
-                                    placeholder="Enter text here or upload a file..."
-                                />
-                                <button onClick={() => handleExtractTerms(text, setTerms)}
-                                        className="action-button extract">Extract Terms
-                                </button>
-                                <ul className="term-list">
-                                    {terms.map((term, index) => <li key={index}>{term}</li>)}
-                                </ul>
-                            </div>
-                        )}
+                            {/* Extract View */}
+                            {view === "extract" && (
+                                <div className="section">
+                                    <h2>Input Text to Extract Key Terms</h2>
+                                    <textarea
+                                        value={text}
+                                        onChange={(e) => setText(e.target.value)}
+                                        rows={6}
+                                        className="text-input"
+                                        placeholder="Enter text here..."
+                                    />
+                                    <button onClick={handleCreateFlashcardsClick} className="action-button add">
+                                        Extract Terms and Create Flashcards
+                                    </button>
+                                    <ul className="term-list">
+                                        {terms.map((term, index) => <li key={index}>{term}</li>)}
+                                    </ul>
+                                </div>
+                            )}
 
                         {/* Flashcards View */}
                         {view === "flashcards" && flashcards.length > 0 && (

@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 // Function to handle extracting key terms and creating flashcards
+// Function to handle extracting key terms and creating flashcards
 export const handleExtractTerms = async (text, setTerms, setFlashcards, setView) => {
     try {
         const response = await axios.post(
@@ -16,11 +17,14 @@ export const handleExtractTerms = async (text, setTerms, setFlashcards, setView)
                 },
             }
         );
+
         const extractedTerms = response.data.choices[0].message.content.split(", ");
-        setTerms(extractedTerms);
+
+        // Ensure extractedTerms is an array
+        setTerms(Array.isArray(extractedTerms) ? extractedTerms : []);
 
         // Automatically create flashcards after terms are extracted
-        handleCreateFlashcards(extractedTerms, setFlashcards, setView);
+        await handleCreateFlashcards(extractedTerms, setFlashcards, setView);
     } catch (error) {
         console.error("Error extracting terms:", error);
     }
@@ -29,6 +33,12 @@ export const handleExtractTerms = async (text, setTerms, setFlashcards, setView)
 // Function to handle creating flashcards from extracted terms
 export const handleCreateFlashcards = async (terms, setFlashcards, setView) => {
     try {
+        // Check if terms is an array; if not, log an error and return
+        if (!Array.isArray(terms)) {
+            console.error("Expected terms to be an array, but got:", terms);
+            return;
+        }
+
         const prompt = `Create concise definitions for these terms: ${terms.join(", ")}`;
         const response = await axios.post(
             "https://api.openai.com/v1/chat/completions",
@@ -82,7 +92,7 @@ export const handleFileUpload = async (file, setText, setTerms, setFlashcards, s
             const parsedContent = response.data.parsedContent;
 
             setText(parsedContent);
-            handleExtractTerms(parsedContent, setTerms, setFlashcards, setView);
+            await handleExtractTerms(parsedContent, setTerms, setFlashcards, setView);
         }
     } catch (error) {
         console.error("Error uploading file:", error);
